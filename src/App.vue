@@ -52,7 +52,6 @@
           <v-list-tile
             v-for="(admin, i) in admins"
             :key="i"
-            @click=""
           >
             <v-list-tile-title v-text="admin[0]+admin[1]"></v-list-tile-title>
           </v-list-tile>
@@ -72,7 +71,6 @@
           <v-list-tile
             v-for="(crud, i) in cruds"
             :key="i"
-            @click=""
           >
             <v-list-tile-content>
               <v-list-tile-title v-text="crud[0]">
