@@ -249,7 +249,7 @@ export default {
           return item
         }))
       }).then(()=>{
-        console.log(context.getters['groupList'])
+        // console.log(context.getters['groupList'])
       })
     },
     deleteGroup (context, name) {

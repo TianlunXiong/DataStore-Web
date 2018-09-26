@@ -6,7 +6,7 @@
                     <v-img
                     @dblclick="changeImage"
                     :src="imagePath"
-                    height="350px"
+                    class="imageStyle"
                     >
                     </v-img>
                     <v-text-field box label="Image's URL" v-model="imagePathBuffer" v-show="isShownPath"></v-text-field>
@@ -97,7 +97,6 @@ export default {
     seeRaw () {
       if(!this.rawVisible) {
         this.$store.dispatch('creator/preBuild').then( r => {
-          console.log(r)
           return r
         }).then( r => {
           this.$store.dispatch('creator/buildAll', r).then( o => {
@@ -175,5 +174,7 @@ export default {
 </script>
 
 <style>
-
+.imageStyle {
+  height: 40vh;
+}
 </style>

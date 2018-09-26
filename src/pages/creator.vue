@@ -1,6 +1,6 @@
 <template>
-    <v-container text-xs-center fluid fill-height>
-        <v-layout justify-center  >
+    <v-container text-xs-center fluid>
+        <v-layout justify-center>
             <v-flex>
                 <v-layout column>
                     <v-flex>
@@ -22,17 +22,5 @@ export default {
 </script>
 
 <style>
-.slim-padding{
-    padding: 5px 0px;
-}
-.slide-left-enter, .slide-right-leave-active {
-  opacity: 0;
-  -webkit-transform: translate(30px, 15px) scale(1.2);
-  transform: translate(30px, 15px) scale(1.2);
-}
-.slide-left-leave-active, .slide-right-enter {
-  opacity: 0;
-  -webkit-transform: translate(-30px, 15px) scale(1.2);
-  transform: translate(-30px, 15px) scale(1.2);
-}
+
 </style>

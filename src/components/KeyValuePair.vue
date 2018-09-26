@@ -13,7 +13,7 @@
             <v-flex>
               <v-layout>
                 <v-flex xs6>
-                  <v-layout>
+                  <v-layout wrap>
                     <v-flex>
                       <v-switch label="advanced" class="mt-4" v-model="isAdvancedType"></v-switch>
                     </v-flex>

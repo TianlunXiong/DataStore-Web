@@ -1,32 +1,43 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-layout>
       <v-flex>
         <v-card dark color="teal accent-4">
           <v-card color="yellow lighten-5" class="table">
-            
           </v-card>
           <v-card-text>
-            <v-select
-              color="white"
-              :items="Object.keys($store.getters['creator/workSpace'])"
-              v-model="firstSelection"
-              label="First"
-            ></v-select>
-            <v-select
-              color="white"
-              :items="secondType"
-              v-model="secondSelection"
-              label="Second"
-            ></v-select>
-            <v-select
-              color="white"
-              v-show="showItemSelection"
-              :items="itemKeys"
-              v-model="keySelection"
-              @change="handleKeySelection"
-              label="key"
-            ></v-select>
+              <v-layout row>
+                <v-flex>
+                  <v-select
+                    dense
+                    color="white"
+                    :items="Object.keys($store.getters['creator/workSpace'])"
+                    v-model="firstSelection"
+                    label="First"
+                  ></v-select>
+                </v-flex>
+                <v-flex>
+                  <v-select
+                    dense
+                    color="white"
+                    :items="secondType"
+                    v-model="secondSelection"
+                    label="Second"
+                  ></v-select>
+                </v-flex>
+
+              </v-layout>
+              <v-layout>
+                <v-select
+                  dense
+                  color="white"
+                  v-show="showItemSelection"
+                  :items="itemKeys"
+                  v-model="keySelection"
+                  @change="handleKeySelection"
+                  label="key"
+                ></v-select>
+              </v-layout>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -198,7 +209,7 @@ export default {
 
 <style>
 .table {
-  height: 500px;
+  height: 40vh;
   border: 1px solid #000;
 }
 .axis path,

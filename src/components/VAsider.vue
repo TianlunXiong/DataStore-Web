@@ -62,6 +62,14 @@
             </v-list-tile>
           </v-list-group>
         </v-list-group>
+        <v-list-tile @click="handleEmpty">
+          <v-list-tile-action>
+            <v-icon>keyboard_arrow_left</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Back</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
 </template>
@@ -74,6 +82,9 @@ export default {
         this.$store.dispatch('creator/setInjectGroup', name)
       })
     },
+    handleEmpty () {
+      this.$store.dispatch('interface/toggleDrawer')
+    }
   }
 }
 </script>

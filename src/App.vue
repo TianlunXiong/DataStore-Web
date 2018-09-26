@@ -2,7 +2,7 @@
   <v-app id="inspire">
     <VAsider></VAsider>
     <VHeader></VHeader>
-    <v-content class="bg-image">
+    <v-content>
       <transition :name="transitionName">
         <keep-alive>
           <router-view class="child-view"></router-view>
@@ -35,7 +35,6 @@ export default {
     }
   },
   beforeMount(){
-    console.log(d3)
     this.$store.dispatch('user/checkLogin').then(r => {
       this.$store.dispatch('creator/getGroup')
     })
@@ -75,9 +74,9 @@ export default {
   left: 0;
   right:0;
   bottom: 0;
-  top: 40px;
-  width: 100%;
+  top: 0;
   height: 100%;
+  width: 100%;
   transition: all .5s cubic-bezier(.55,0,.1,1);
 }
 .slide-left-enter, .slide-right-leave-active {
