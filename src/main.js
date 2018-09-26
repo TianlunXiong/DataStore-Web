@@ -3,6 +3,7 @@ import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import faker from 'faker'
+import * as d3 from 'd3'
 
 import App from './App'
 import router from './router'

@@ -1,3 +1,4 @@
+import faker from 'faker'
 export const FAKER_TYPE = {
   'String': {
     'address': [
@@ -126,7 +127,8 @@ export const FAKER_TYPE = {
   },
   'Number': {
     'random': [
-      'number'
+      'number',
+      'ageRandom'
     ]
   },
   'Boolean': {
@@ -135,6 +137,12 @@ export const FAKER_TYPE = {
     ]
   }
 }
+
+
+faker.random.ageRandom = () => {
+  return ~~(Math.random()*60 + 10)
+}
+
 export default {
   namespaced: true,
   state: {

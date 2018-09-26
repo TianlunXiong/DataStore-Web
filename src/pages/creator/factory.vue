@@ -46,7 +46,7 @@
               </v-flex>
               <v-flex  xs8 sm9 md10 lg12>
                   <v-expansion-panel>
-                        <KeyValuePair @deleteMe="deleteItem" v-for="(item, i) in $store.state.creator.factory.entriesBuffer" :belong="name" :index="i" :key="item.key" :initialName="item.key"></KeyValuePair>
+                        <KeyValuePair @deleteMe="deleteItem" v-for="(item, i) in $store.state.creator.factory.entriesBuffer" :belong="name" :index="i" :key="item.key" :initialName="(item.key)"></KeyValuePair>
                   </v-expansion-panel>
               </v-flex>
           </v-layout>
@@ -70,7 +70,7 @@ export default {
       if (to.query.target) {
         let key, value
         vm.$store.dispatch('creator/resetEntriesBuffer').then(() => {
-          Object.entries(vm.$store.state.creator.objects[to.query.target]).forEach(item => {
+          Object.entries(vm.$store.getters['creator/workSpace'][to.query.target]).forEach(item => {
             [key, value] = item
             vm.name = to.query.target
             vm.$store.dispatch('creator/pushEntriesBuffer', {
@@ -99,7 +99,7 @@ export default {
       this.currentKey = ''
     },
     commit () {
-      if (this.name && this.name.search(/\s/g) === -1 && this.$store.state.creator.factory.entriesBuffer.some(item => !(item.value.descriptor === ''))) {
+      if (this.name && this.name.search(/\s/g) === -1 && this.$store.state.creator.factory.entriesBuffer.every(item => !(item.value.descriptor === ''))) {
         const temp = {}
         this.$store.state.creator.factory.entriesBuffer.forEach(item => {
           temp[item.key] = item.value

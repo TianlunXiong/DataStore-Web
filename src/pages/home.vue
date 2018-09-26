@@ -1,6 +1,6 @@
 <template>
     <v-container fluid fill-height>
-        <v-layout justify-center >
+        <v-layout justify-center column>
             <v-flex xs12 md10 lg9>
                 <v-card >
                     <v-img
@@ -12,11 +12,8 @@
                     <v-text-field box label="Image's URL" v-model="imagePathBuffer" v-show="isShownPath"></v-text-field>
                     <v-card-title>
                     <div>
-                        <span class="headline font-weight-bold">
-                            你好 {{$store.state.user.name}}
-                        </span>
-                        <div class="headline">
-                            Device: {{$store.getters['user/userAgent']}}
+                        <div>
+                            <v-text-field v-model="groupName" :error="$store.state.interface.groupNameError" label="Group Name" @change="namingGroup" clearable></v-text-field>
                         </div>
                         <div>
                           <v-select
@@ -26,9 +23,6 @@
                             @change="switchLocale"
                           ></v-select>
                         </div>
-                        <div>
-                          {{target}}
-                        </div>
                     </div>
                     </v-card-title>
                     <v-card-actions>
@@ -37,7 +31,10 @@
                     </v-btn>
                     <v-spacer></v-spacer>
                     <v-btn flat icon color="teal accent-4" @click="upLoad">
-                        <v-icon>cloud_upload</v-icon>
+                        <v-icon>{{ $store.state.creator.operation === 'local' ? 'cloud_upload' : 'cached'}}</v-icon>
+                    </v-btn>
+                    <v-btn v-show="$store.state.creator.operation === 'inject'" icon flat color="error" @click="deleteGroup">
+                      <v-icon>close</v-icon>
                     </v-btn>
                     </v-card-actions>
                     <v-snackbar
@@ -62,6 +59,11 @@
                     </v-snackbar>
                 </v-card>
             </v-flex>
+            <v-flex >
+              <div v-show="rawVisible">
+                {{target}}
+              </div>
+            </v-flex>
         </v-layout>
     </v-container>
 </template>
@@ -78,8 +80,10 @@ export default {
       y: 'top',
       x: null,
       mode: '',
-      timeout: 1200,
-      text: '您还未登陆'
+      timeout: 2000,
+      text: '',
+      groupName: '',
+      rawVisible: false
     }
   },
   watch: {
@@ -91,30 +95,53 @@ export default {
   },
   methods: {
     seeRaw () {
-      this.$store.dispatch('creator/preBuild').then( r => {
-        console.log(r)
-        return r
-      }).then( r => {
-        this.$store.dispatch('creator/buildAll', r).then( o => {
-          this.target = o
+      if(!this.rawVisible) {
+        this.$store.dispatch('creator/preBuild').then( r => {
+          console.log(r)
+          return r
+        }).then( r => {
+          this.$store.dispatch('creator/buildAll', r).then( o => {
+            this.target = o
+            this.rawVisible = true
+          })
         })
-      })
+      } else {
+        this.rawVisible = false
+      }
     },
     upLoad () {
       if(this.$store.state.user.isLogin){
-        //施工中 先别上传
-        //this.$store.dispatch('creator/uploadData', this.$store.state.user.name).then(r => console.log(r))
-        alert("上传功能正在施工中")
+        switch(this.$store.state.creator.operation) {
+          // 添加组
+          case 'local':
+            const _n = this.$store.state.creator.groupName
+            if((_n !== '') && (!/\s/.test(_n)) && (! this.$store.getters['creator/groupList'].some(item => item === _n))){
+              this.$store.dispatch('creator/uploadData', this.$store.state.user.name).then(r => {
+                if(r.state.success) {
+                  this.text = '创建组成功'
+                  this.snackbar = true
+                  this.$store.dispatch('creator/getGroup')
+                }
+              })
+            } else {
+              this.$store.dispatch('interface/setGroupNameError', true)
+            }
+            break
+          // 更新组
+          case 'inject':
+            this.$store.dispatch('creator/updateGroup',this.$store.state.user.name).then(r => {
+                if(r.state.success) {
+                  this.text = '修改组成功'
+                  this.snackbar = true
+                  this.$store.dispatch('creator/getGroup')
+                }
+            })
+        }
       } else {
         //未登录
+        this.text = '您还未登陆'
         this.snackbar = true
       }
-      
-    },
-    getData () {
-      this.$store.dispatch('creator/getData').then(r => {
-        console.log(r)
-      })
     },
     switchLocale (val) {
       this.$store.dispatch('faker/switchLocale', val).then(()=> {
@@ -124,6 +151,25 @@ export default {
     changeImage () {
       this.isShownPath = !this.isShownPath
     },
+    changeOperation () {
+      this.$store.dispatch('creator/toggleOperation')
+    },
+    namingGroup () {
+      this.$store.dispatch('creator/setLocalGroup', this.groupName)
+    },
+    deleteGroup () {
+      if(this.$store.state.user.isLogin){
+          this.$store.dispatch('creator/deleteGroup', this.$store.state.user.name).then(r => {
+            if(r.state.success){
+              this.$store.dispatch('creator/getGroup')
+            }
+          })
+      } else {
+        //未登录
+        this.text = '您还未登陆'
+        this.snackbar = true
+      }
+    }
   }
 }
 </script>

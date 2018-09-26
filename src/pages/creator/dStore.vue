@@ -21,7 +21,7 @@
           <v-card-title >
             <v-layout>
               <v-flex xs12>
-                <v-btn block @click="handleEdit(props.index)">
+                <v-btn style="text-transform: none" block @click="handleEdit(props.index)">
                   {{ props.item.name }}
                 </v-btn>
               </v-flex>
@@ -35,7 +35,7 @@
           <v-divider></v-divider>
           <v-list  dense>
             <v-list-tile v-for="data in props.item.values" :key="data.key">
-              <v-list-tile-content>key:{{data.key}} </v-list-tile-content> <br>
+              <v-list-tile-content>{{data.key}} </v-list-tile-content> <br>
               <v-list-tile-content class="align-end">{{ data.descriptor }}</v-list-tile-content>
             </v-list-tile>
           </v-list>
@@ -57,7 +57,6 @@ export default {
     handleEdit (val) {
       this.$router.push({name: 'factory', query: {target: this.$store.getters['creator/dStoreList'][val].name}})
     },
-
     deleteItem (name) {
       this.$store.dispatch('creator/deleteObject', name)
     }

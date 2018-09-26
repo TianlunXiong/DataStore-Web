@@ -69,7 +69,7 @@
                 <v-layout>
                   <v-flex xs6>
                     <v-select
-                      :items="Object.keys($store.state.creator.objects)"
+                      :items="Object.keys($store.getters['creator/workSpace']).filter(function(item){ return item !== belong})"
                       v-model="selectedObject"
                       label="advancedType"
                     ></v-select>
@@ -145,7 +145,58 @@ export default {
     initialName: String,
     belong: String
   },
-  mounted () {
+  created () {
+    // console.log(this.belong)
+    const _sp = this.$store.state.creator.factory.entriesBuffer[this.index]['value']['descriptor'].split('|')
+
+    if (_sp[0] === 'String' || _sp[0] === 'Boolean' || _sp[0] === 'Number') {
+      // primary
+      this.typePrimary = _sp[0]
+      if(/^\w+\.\w+$/.test(_sp[1])){
+        const temp = _sp[1].split('.')
+        this.fakerType = temp[0]
+        this.fakerTypeItem = temp[1]
+      } else {
+        // Custom
+        const val = _sp[1].match(/^Custom\((.*)\)$/)[1]
+        this.isCustomType = true
+        switch (_sp[0]) {
+          case "String":
+            this.customField = String(val)
+            break
+          case "Number":
+            this.customField = Number(val)
+            break
+          case "Boolean":
+            if (val === 'true') {
+              this.selectedBoolean = true
+            } else {
+              this.selectedBoolean = false
+            }
+        }
+      }
+    } else if(_sp[0] === 'Object' || /^Array\(\d+\)$/.test(_sp[0])) {
+      // advanced
+      this.isAdvancedType = true
+      if (_sp[0] === 'Object') {
+        if(Object.keys(this.$store.getters['creator/workSpace']).filter(item => item !== this.belong).indexOf(_sp[1]) !== -1){
+          this.typeAdvanced = 'Object'
+          this.selectedObject = _sp[1]
+        }
+      } else {
+        const _m = _sp[0].match(/^Array\((\d+)\)$/)
+        if (_m) {
+          this.typeAdvanced = 'Array'
+          this.count = _m[1]
+          if(_sp[1]){
+            if(Object.keys(this.$store.getters['creator/workSpace']).filter(item => item !== this.belong).indexOf(_sp[1]) !== -1){
+              this.selectedObject = _sp[1]
+            }
+          }
+        }
+      }
+    }
+    
   },
   computed: {
     totalType () {
@@ -160,8 +211,6 @@ export default {
       }
     }
   },
-  watch: {
-  },
   methods: {
     save () {
       try {
@@ -172,14 +221,12 @@ export default {
               this.$store.dispatch('creator/achieveEntriesBuffer', {
                 index: this.index,
                 descriptor: `Object|${this.selectedObject}`,
-                // initiator: () => builder(this.$store.state.creator.objects[this.selectedObject])
               })
               break
             case 'Array':
               this.$store.dispatch('creator/achieveEntriesBuffer', {
                 index: this.index,
                 descriptor: `Array(${this.count})|${this.selectedObject}`,
-                // initiator: () => new Array(this.count).fill(0).map(item => builder(this.$store.state.creator.objects[this.selectedObject]))
               })
               break
           }
@@ -189,7 +236,6 @@ export default {
               this.$store.dispatch('creator/achieveEntriesBuffer', {
                 index: this.index,
                 descriptor: `${this.typePrimary}|${this.fakerType}.${this.fakerTypeItem}`,
-                // initiator: this.$faker[this.fakerType][this.fakerTypeItem]
               })
             }
           } else {
@@ -198,21 +244,18 @@ export default {
                 this.$store.dispatch('creator/achieveEntriesBuffer', {
                   index: this.index,
                   descriptor: `String|Custom(${this.customField})`,
-                  // initiator: () => this.customField
                 })
                 break
               case 'Number':
                 this.$store.dispatch('creator/achieveEntriesBuffer', {
                   index: this.index,
                   descriptor: `Number|Custom(${this.customField})`,
-                  // initiator: () => Number(this.customField)
                 })
                 break
               case 'Boolean':
                 this.$store.dispatch('creator/achieveEntriesBuffer', {
                   index: this.index,
-                  descriptor: `Boolean|Custom(${this.customField})`,
-                  // initiator: () => this.selectedBoolean
+                  descriptor: `Boolean|Custom(${this.selectedBoolean})`,
                 })
                 break
             }

@@ -4,20 +4,11 @@
             <v-flex>
                 <v-layout column>
                     <v-flex>
-                        <v-breadcrumbs large divider="-">
-                        <v-breadcrumbs-item
-                            v-for="item in getPath()"
-                            :key="item.text"
-                            :disabled="item.disabled"
-                        >
-                            {{ item.text }}
-                        </v-breadcrumbs-item>
-                        </v-breadcrumbs>
-                    </v-flex>
-                    <v-flex>
-                        <keep-alive>
-                            <router-view></router-view>
-                        </keep-alive>
+                        <transition name="slide-left">
+                            <keep-alive>
+                                <router-view class="child-view"></router-view>
+                            </keep-alive>
+                        </transition>
                     </v-flex>
                 </v-layout>
             </v-flex>
@@ -27,19 +18,21 @@
 
 <script>
 export default {
-  methods: {
-    getPath () {
-      return this.$route.path.split('/').slice(1).map((item, i) => ({
-        text: item,
-        disabled: true // this.$route.name === item
-      }))
-    }
-  }
 }
 </script>
 
 <style>
-    .slim-padding{
-        padding: 5px 0px;
-    }
+.slim-padding{
+    padding: 5px 0px;
+}
+.slide-left-enter, .slide-right-leave-active {
+  opacity: 0;
+  -webkit-transform: translate(30px, 15px) scale(1.2);
+  transform: translate(30px, 15px) scale(1.2);
+}
+.slide-left-leave-active, .slide-right-enter {
+  opacity: 0;
+  -webkit-transform: translate(-30px, 15px) scale(1.2);
+  transform: translate(-30px, 15px) scale(1.2);
+}
 </style>
